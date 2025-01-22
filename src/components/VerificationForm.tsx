@@ -17,6 +17,8 @@ export const VerificationForm = () => {
     dateOfBirth: "",
     email: "",
     phone: "",
+    documentNumber: "",
+    documentExpiry: "",
     idFront: null as File | null,
     idBack: null as File | null,
     passportPage: null as File | null,
@@ -36,6 +38,15 @@ export const VerificationForm = () => {
     }
 
     if (kycStep === 2) {
+      if (!kycData.documentNumber || !kycData.documentExpiry) {
+        toast({
+          title: "Informations manquantes",
+          description: "Veuillez remplir le numéro du document et sa date d'expiration.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (documentType === "id" && (!kycData.idFront || !kycData.idBack)) {
         toast({
           title: "Documents manquants",
@@ -189,6 +200,28 @@ export const VerificationForm = () => {
                 </Label>
               </div>
             </RadioGroup>
+
+            <div className="space-y-4">
+              <Input
+                placeholder="Numéro du document"
+                value={kycData.documentNumber}
+                onChange={(e) =>
+                  setKycData({ ...kycData, documentNumber: e.target.value })
+                }
+                required
+                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+              />
+              <Input
+                type="date"
+                placeholder="Date d'expiration"
+                value={kycData.documentExpiry}
+                onChange={(e) =>
+                  setKycData({ ...kycData, documentExpiry: e.target.value })
+                }
+                required
+                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+              />
+            </div>
 
             {documentType === "id" ? (
               <div className="space-y-4">
