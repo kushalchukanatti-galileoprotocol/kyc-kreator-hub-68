@@ -1,3 +1,4 @@
+import { VerificationForm } from "@/components/VerificationForm";
 import { Header } from "@/components/Header";
 
 const KYC = () => {
@@ -10,6 +11,9 @@ const KYC = () => {
           <p className="text-gray-600">
             Complete your personal verification process securely and easily.
           </p>
+        </div>
+        <div className="flex justify-center">
+          <VerificationForm />
         </div>
       </main>
     </div>

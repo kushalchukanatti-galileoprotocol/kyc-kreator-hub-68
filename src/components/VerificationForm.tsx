@@ -4,8 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, Camera, CheckCircle, Building2, User } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const VerificationForm = () => {
+  const { toast } = useToast();
   const [kycStep, setKycStep] = useState(1);
   const [kybStep, setKybStep] = useState(1);
   const [kycData, setKycData] = useState({
@@ -32,6 +34,18 @@ export const VerificationForm = () => {
   });
 
   const handleKycNext = () => {
+    // Validate current step
+    if (kycStep === 1) {
+      if (!kycData.firstName || !kycData.lastName || !kycData.dateOfBirth || !kycData.email || !kycData.phone) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields before proceeding.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setKycStep(kycStep + 1);
     console.log("Moving to KYC step:", kycStep + 1);
   };
@@ -39,6 +53,17 @@ export const VerificationForm = () => {
   const handleKybNext = () => {
     setKybStep(kybStep + 1);
     console.log("Moving to KYB step:", kybStep + 1);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'idDocument' | 'selfie') => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setKycData({ ...kycData, [type]: file });
+      toast({
+        title: "File Uploaded",
+        description: `Your ${type === 'idDocument' ? 'ID document' : 'selfie'} has been uploaded successfully.`,
+      });
+    }
   };
 
   return (
@@ -66,6 +91,7 @@ export const VerificationForm = () => {
                   onChange={(e) =>
                     setKycData({ ...kycData, firstName: e.target.value })
                   }
+                  required
                 />
                 <Input
                   placeholder="Last Name"
@@ -73,6 +99,7 @@ export const VerificationForm = () => {
                   onChange={(e) =>
                     setKycData({ ...kycData, lastName: e.target.value })
                   }
+                  required
                 />
                 <Input
                   type="date"
@@ -81,6 +108,7 @@ export const VerificationForm = () => {
                   onChange={(e) =>
                     setKycData({ ...kycData, dateOfBirth: e.target.value })
                   }
+                  required
                 />
                 <Input
                   type="email"
@@ -89,6 +117,7 @@ export const VerificationForm = () => {
                   onChange={(e) =>
                     setKycData({ ...kycData, email: e.target.value })
                   }
+                  required
                 />
                 <Input
                   type="tel"
@@ -97,10 +126,11 @@ export const VerificationForm = () => {
                   onChange={(e) =>
                     setKycData({ ...kycData, phone: e.target.value })
                   }
+                  required
                 />
               </div>
               <Button onClick={handleKycNext} className="w-full">
-                Next
+                Next Step: ID Document
               </Button>
             </div>
           )}
@@ -108,19 +138,26 @@ export const VerificationForm = () => {
           {kycStep === 2 && (
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Identity Document</h2>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                   onClick={() => document.getElementById('idDocument')?.click()}>
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <p className="mt-2">Upload your ID document (Passport or ID card)</p>
+                <p className="text-sm text-gray-500 mt-1">Click or drag and drop your file here</p>
                 <input
+                  id="idDocument"
                   type="file"
                   className="hidden"
-                  onChange={(e) =>
-                    setKycData({ ...kycData, idDocument: e.target.files?.[0] })
-                  }
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e, 'idDocument')}
                 />
               </div>
-              <Button onClick={handleKycNext} className="w-full">
-                Next
+              {kycData.idDocument && (
+                <p className="text-sm text-green-600">
+                  ✓ Document uploaded: {(kycData.idDocument as File).name}
+                </p>
+              )}
+              <Button onClick={handleKycNext} className="w-full" disabled={!kycData.idDocument}>
+                Next Step: Selfie
               </Button>
             </div>
           )}
@@ -128,11 +165,29 @@ export const VerificationForm = () => {
           {kycStep === 3 && (
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Selfie Verification</h2>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+                   onClick={() => document.getElementById('selfie')?.click()}>
                 <Camera className="mx-auto h-12 w-12 text-gray-400" />
                 <p className="mt-2">Take a selfie for verification</p>
+                <p className="text-sm text-gray-500 mt-1">Make sure your face is clearly visible</p>
+                <input
+                  id="selfie"
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  capture="user"
+                  onChange={(e) => handleFileUpload(e, 'selfie')}
+                />
               </div>
-              <Button onClick={handleKycNext} className="w-full">
+              {kycData.selfie && (
+                <p className="text-sm text-green-600">
+                  ✓ Selfie uploaded: {(kycData.selfie as File).name}
+                </p>
+              )}
+              <Button 
+                onClick={handleKycNext} 
+                className="w-full"
+                disabled={!kycData.selfie}>
                 Submit Verification
               </Button>
             </div>
