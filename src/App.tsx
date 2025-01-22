@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import KYC from "./pages/KYC";
+import KYB from "./pages/KYB";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +17,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/kyc" element={<KYC />} />
+          <Route path="/kyb" element={<KYB />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
