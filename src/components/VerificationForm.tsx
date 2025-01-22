@@ -49,8 +49,28 @@ export const VerificationForm = () => {
     console.log("Moving to KYC step:", kycStep + 1);
   };
 
+  const handleKybNext = () => {
+    if (kybStep === 1) {
+      if (!kybData.companyName || !kybData.registrationNumber || !kybData.taxId) {
+        toast({
+          title: "Informations manquantes",
+          description: "Veuillez remplir tous les champs obligatoires avant de continuer.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    setKybStep(kybStep + 1);
+    console.log("Moving to KYB step:", kybStep + 1);
+  };
+
   const handleKycBack = () => {
     setKycStep(kycStep - 1);
+  };
+
+  const handleKybBack = () => {
+    setKybStep(kybStep - 1);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'idDocument' | 'selfie') => {
@@ -63,6 +83,8 @@ export const VerificationForm = () => {
       });
     }
   };
+
+  // ... keep existing code (rest of the component JSX)
 
   return (
     <Card className="w-full max-w-2xl p-6 animate-fadeIn">
@@ -329,9 +351,14 @@ export const VerificationForm = () => {
                   }
                 />
               </div>
-              <Button onClick={handleKybNext} className="w-full">
-                Next
-              </Button>
+              <div className="flex gap-4">
+                <Button onClick={handleKybBack} variant="outline" className="flex-1">
+                  Back
+                </Button>
+                <Button onClick={handleKybNext} className="flex-1">
+                  Next
+                </Button>
+              </div>
             </div>
           )}
 
@@ -368,9 +395,14 @@ export const VerificationForm = () => {
                   />
                 </div>
               </div>
-              <Button onClick={handleKybNext} className="w-full">
-                Submit Verification
-              </Button>
+              <div className="flex gap-4">
+                <Button onClick={handleKybBack} variant="outline" className="flex-1">
+                  Back
+                </Button>
+                <Button onClick={handleKybNext} className="flex-1">
+                  Submit Verification
+                </Button>
+              </div>
             </div>
           )}
 
