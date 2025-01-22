@@ -211,16 +211,21 @@ export const VerificationForm = () => {
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
-              <Input
-                type="date"
-                placeholder="Date d'expiration"
-                value={kycData.documentExpiry}
-                onChange={(e) =>
-                  setKycData({ ...kycData, documentExpiry: e.target.value })
-                }
-                required
-                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="documentExpiry" className="text-sm text-gray-600">
+                  Date d'expiration du document
+                </Label>
+                <Input
+                  id="documentExpiry"
+                  type="date"
+                  value={kycData.documentExpiry}
+                  onChange={(e) =>
+                    setKycData({ ...kycData, documentExpiry: e.target.value })
+                  }
+                  required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+                />
+              </div>
             </div>
 
             {documentType === "id" ? (
