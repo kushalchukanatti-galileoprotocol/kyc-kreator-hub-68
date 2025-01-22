@@ -88,9 +88,9 @@ export const VerificationForm = () => {
     <Card className="w-full max-w-2xl p-6 animate-fadeIn">
       <div className="space-y-6">
         {/* Progress bar */}
-        <div className="w-full bg-gray-100 rounded-full h-2">
+        <div className="relative w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div 
-            className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-in-out"
+            className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-500 ease-in-out"
             style={{ width: `${(kycStep / 3) * 100}%` }}
           ></div>
         </div>
