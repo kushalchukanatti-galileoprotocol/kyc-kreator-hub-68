@@ -88,25 +88,25 @@ export const VerificationForm = () => {
     <Card className="w-full max-w-2xl p-6 animate-fadeIn">
       <div className="space-y-6">
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div className="w-full bg-gray-100 rounded-full h-2">
           <div 
-            className="bg-secondary h-2.5 rounded-full transition-all duration-500"
+            className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-in-out"
             style={{ width: `${(kycStep / 3) * 100}%` }}
           ></div>
         </div>
 
         {/* Step indicators */}
         <div className="flex justify-between mb-8">
-          <div className={`flex flex-col items-center ${kycStep >= 1 ? 'text-secondary' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 1 ? 'bg-secondary text-white' : 'bg-gray-200'}`}>1</div>
+          <div className={`flex flex-col items-center ${kycStep >= 1 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>1</div>
             <span className="text-xs">Informations</span>
           </div>
-          <div className={`flex flex-col items-center ${kycStep >= 2 ? 'text-secondary' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 2 ? 'bg-secondary text-white' : 'bg-gray-200'}`}>2</div>
+          <div className={`flex flex-col items-center ${kycStep >= 2 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 2 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>2</div>
             <span className="text-xs">Document</span>
           </div>
-          <div className={`flex flex-col items-center ${kycStep >= 3 ? 'text-secondary' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 3 ? 'bg-secondary text-white' : 'bg-gray-200'}`}>3</div>
+          <div className={`flex flex-col items-center ${kycStep >= 3 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 3 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>3</div>
             <span className="text-xs">Selfie</span>
           </div>
         </div>
