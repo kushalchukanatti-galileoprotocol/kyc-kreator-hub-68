@@ -2,15 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Clock } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Clock3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
   const [kycStep, setKycStep] = useState(1);
   const [walletAddress, setWalletAddress] = useState<string>("");
+  const [wantsRewards, setWantsRewards] = useState<boolean>(true);
   const [kycData, setKycData] = useState({
     firstName: "",
     lastName: "",
@@ -477,22 +479,68 @@ export const VerificationForm = () => {
         {kycStep === 4 && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Adresse de récompense</h2>
-            <p className="text-gray-600">
-              Veuillez entrer votre adresse de wallet compatible EVM pour recevoir votre récompense d'inscription.
-            </p>
             
-            <div className="space-y-2">
-              <Label htmlFor="walletAddress">Adresse EVM</Label>
-              <Input
-                id="walletAddress"
-                placeholder="0x..."
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                className="font-mono"
-              />
-              <p className="text-sm text-gray-500">
-                L'adresse doit commencer par "0x" et contenir 42 caractères au total
-              </p>
+            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-blue-600" />
+                Informations importantes concernant les récompenses
+              </h3>
+              <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
+                <li>Un wallet compatible EVM est nécessaire pour recevoir vos tokens RIWA</li>
+                <li>Si vous n'avez pas encore de wallet, vous pouvez en créer un facilement avec MetaMask</li>
+                <li>Vous pouvez aussi choisir de ne pas recevoir de récompense</li>
+              </ul>
+              <a 
+                href="https://metamask.io/download/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center mt-4 text-blue-600 hover:text-blue-700 font-medium"
+              >
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Créer un wallet avec MetaMask
+              </a>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="optOutRewards"
+                  checked={!wantsRewards}
+                  onCheckedChange={(checked) => {
+                    setWantsRewards(!checked);
+                    if (checked) {
+                      setWalletAddress('');
+                    }
+                  }}
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="optOutRewards"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Je ne souhaite pas recevoir de tokens RIWA
+                  </label>
+                  <p className="text-sm text-muted-foreground">
+                    Vous pouvez toujours compléter votre vérification sans recevoir de récompense
+                  </p>
+                </div>
+              </div>
+
+              {wantsRewards && (
+                <div className="space-y-2">
+                  <Label htmlFor="walletAddress">Adresse EVM</Label>
+                  <Input
+                    id="walletAddress"
+                    placeholder="0x..."
+                    value={walletAddress}
+                    onChange={(e) => setWalletAddress(e.target.value)}
+                    className="font-mono"
+                  />
+                  <p className="text-sm text-gray-500">
+                    L'adresse doit commencer par "0x" et contenir 42 caractères au total
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4">
@@ -500,7 +548,11 @@ export const VerificationForm = () => {
                 <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
                 Retour
               </Button>
-              <Button onClick={handleKycNext} className="flex-1 group">
+              <Button 
+                onClick={handleKycNext} 
+                className="flex-1 group"
+                disabled={wantsRewards && !validateEVMAddress(walletAddress)}
+              >
                 Finaliser
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
