@@ -1,3 +1,4 @@
+import { BusinessVerificationForm } from "@/components/BusinessVerificationForm";
 import { Header } from "@/components/Header";
 
 const KYB = () => {
@@ -6,10 +7,13 @@ const KYB = () => {
       <Header />
       <main className="container py-12">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Business Verification (KYB)</h1>
+          <h1 className="text-4xl font-bold mb-4">Vérification d'Entreprise (KYB)</h1>
           <p className="text-gray-600">
-            Verify your business identity with our secure platform.
+            Complétez le processus de vérification de votre entreprise de manière sécurisée.
           </p>
+        </div>
+        <div className="flex justify-center">
+          <BusinessVerificationForm />
         </div>
       </main>
     </div>
