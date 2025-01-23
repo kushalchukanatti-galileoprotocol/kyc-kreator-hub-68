@@ -29,7 +29,10 @@ export const VerificationForm = () => {
 
   const connectWallet = async () => {
     try {
+      console.log("Tentative de connexion à Metamask...");
+      
       if (!window.ethereum) {
+        console.error("Metamask non détecté");
         toast({
           title: "Metamask non détecté",
           description: "Veuillez installer Metamask pour continuer.",
@@ -38,16 +41,29 @@ export const VerificationForm = () => {
         return;
       }
 
+      console.log("Metamask détecté, demande de connexion...");
       const provider = new BrowserProvider(window.ethereum);
+      
+      // Demande explicite de connexion du compte
       const accounts = await provider.send("eth_requestAccounts", []);
+      console.log("Comptes disponibles:", accounts);
       
       if (accounts.length > 0) {
-        setWalletAddress(accounts[0]);
+        const address = accounts[0];
+        console.log("Wallet connecté:", address);
+        setWalletAddress(address);
         toast({
           title: "Wallet connecté",
           description: "Votre wallet Metamask a été connecté avec succès.",
         });
-        setKycStep(5); // Passer à l'étape finale
+        setKycStep(5); // Passer à l'étape finale après connexion réussie
+      } else {
+        console.error("Aucun compte disponible");
+        toast({
+          title: "Erreur de connexion",
+          description: "Aucun compte Metamask n'a été trouvé.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Erreur lors de la connexion du wallet:", error);
