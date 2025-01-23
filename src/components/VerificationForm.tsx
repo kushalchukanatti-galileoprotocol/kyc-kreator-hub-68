@@ -2,15 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { BrowserProvider } from "ethers";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
   const [kycStep, setKycStep] = useState(1);
   const [documentType, setDocumentType] = useState<"id" | "passport">("id");
+  const [walletAddress, setWalletAddress] = useState<string>("");
   const [kycData, setKycData] = useState({
     firstName: "",
     lastName: "",
@@ -24,6 +26,38 @@ export const VerificationForm = () => {
     passportPage: null as File | null,
     selfie: null as File | null,
   });
+
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) {
+        toast({
+          title: "Metamask non détecté",
+          description: "Veuillez installer Metamask pour continuer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const provider = new BrowserProvider(window.ethereum);
+      const accounts = await provider.send("eth_requestAccounts", []);
+      
+      if (accounts.length > 0) {
+        setWalletAddress(accounts[0]);
+        toast({
+          title: "Wallet connecté",
+          description: "Votre wallet Metamask a été connecté avec succès.",
+        });
+        setKycStep(5); // Passer à l'étape finale
+      }
+    } catch (error) {
+      console.error("Erreur lors de la connexion du wallet:", error);
+      toast({
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue lors de la connexion du wallet.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleKycNext = () => {
     if (kycStep === 1) {
@@ -65,6 +99,15 @@ export const VerificationForm = () => {
       }
     }
 
+    if (kycStep === 3 && !kycData.selfie) {
+      toast({
+        title: "Selfie manquant",
+        description: "Veuillez prendre un selfie avant de continuer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setKycStep(kycStep + 1);
     console.log("Moving to KYC step:", kycStep + 1);
   };
@@ -91,7 +134,7 @@ export const VerificationForm = () => {
         <div className="relative w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div 
             className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-500 ease-in-out"
-            style={{ width: `${(kycStep / 3) * 100}%` }}
+            style={{ width: `${(kycStep / 5) * 100}%` }}
           ></div>
         </div>
 
@@ -108,6 +151,14 @@ export const VerificationForm = () => {
           <div className={`flex flex-col items-center ${kycStep >= 3 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 3 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>3</div>
             <span className="text-xs">Selfie</span>
+          </div>
+          <div className={`flex flex-col items-center ${kycStep >= 4 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 4 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>4</div>
+            <span className="text-xs">Wallet</span>
+          </div>
+          <div className={`flex flex-col items-center ${kycStep >= 5 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 5 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>5</div>
+            <span className="text-xs">Confirmation</span>
           </div>
         </div>
 
@@ -360,12 +411,47 @@ export const VerificationForm = () => {
         )}
 
         {kycStep === 4 && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Connexion du Wallet</h2>
+            <p className="text-gray-600">
+              Connectez votre wallet Metamask pour finaliser votre vérification.
+            </p>
+            
+            {!walletAddress ? (
+              <Button 
+                onClick={connectWallet} 
+                className="w-full group flex items-center justify-center gap-2"
+              >
+                <Wallet className="w-5 h-5" />
+                Connecter Metamask
+              </Button>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-green-600 flex items-center">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Wallet connecté : {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                </p>
+                <Button onClick={handleKycNext} className="w-full group">
+                  Finaliser la vérification
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {kycStep === 5 && (
           <div className="text-center space-y-4">
             <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
             <h2 className="text-2xl font-bold">Vérification Soumise</h2>
             <p className="text-gray-600">
               Nous examinerons vos informations et reviendrons vers vous rapidement.
             </p>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                Wallet associé : {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+              </p>
+            </div>
           </div>
         )}
       </div>
