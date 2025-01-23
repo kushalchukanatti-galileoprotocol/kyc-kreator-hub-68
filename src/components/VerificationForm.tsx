@@ -2,17 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Check, X } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { BrowserProvider } from "ethers";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
-  const [kycStep, setKycStep] = useState(0);
-  const [hasMetamask, setHasMetamask] = useState<boolean | null>(null);
-  const [documentType, setDocumentType] = useState<"id" | "passport">("id");
+  const [kycStep, setKycStep] = useState(1);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [kycData, setKycData] = useState({
     firstName: "",
@@ -28,58 +25,9 @@ export const VerificationForm = () => {
     selfie: null as File | null,
   });
 
-  const connectWallet = async () => {
-    try {
-      if (typeof window.ethereum === 'undefined') {
-        console.error("Metamask not detected");
-        toast({
-          title: "Metamask not detected",
-          description: "Please install Metamask to continue.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log("Requesting account access...");
-      const provider = new BrowserProvider(window.ethereum);
-      
-      // Request account access
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      console.log("Accounts:", accounts);
-
-      if (accounts && accounts.length > 0) {
-        const address = accounts[0];
-        console.log("Connected wallet address:", address);
-        setWalletAddress(address);
-        toast({
-          title: "Wallet connected",
-          description: "Your Metamask wallet has been connected successfully.",
-        });
-        setKycStep(1);
-      } else {
-        throw new Error("No accounts found");
-      }
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-      toast({
-        title: "Connection error",
-        description: "Failed to connect to Metamask. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleMetamaskChoice = (hasMetamask: boolean) => {
-    setHasMetamask(hasMetamask);
-    if (hasMetamask) {
-      setKycStep(0.5); // Nouvelle étape intermédiaire pour la connexion Metamask
-    } else {
-      setKycStep(1); // Passer directement à l'étape suivante si pas de Metamask
-      toast({
-        title: "Continuer sans Metamask",
-        description: "Vous pouvez continuer le processus KYC sans wallet Metamask.",
-      });
-    }
+  const validateEVMAddress = (address: string) => {
+    const evmAddressRegex = /^0x[a-fA-F0-9]{40}$/;
+    return evmAddressRegex.test(address);
   };
 
   const handleKycNext = () => {
@@ -127,8 +75,28 @@ export const VerificationForm = () => {
         title: "Selfie manquant",
         description: "Veuillez prendre un selfie avant de continuer.",
         variant: "destructive",
-      });
+        });
       return;
+    }
+
+    if (kycStep === 4) {
+      if (!walletAddress) {
+        toast({
+          title: "Adresse manquante",
+          description: "Veuillez entrer votre adresse de wallet.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (!validateEVMAddress(walletAddress)) {
+        toast({
+          title: "Adresse invalide",
+          description: "Veuillez entrer une adresse EVM valide (format: 0x...)",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setKycStep(kycStep + 1);
@@ -138,6 +106,8 @@ export const VerificationForm = () => {
   const handleKycBack = () => {
     setKycStep(kycStep - 1);
   };
+
+  const [documentType, setDocumentType] = useState<"id" | "passport">("id");
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'idFront' | 'idBack' | 'passportPage' | 'selfie') => {
     const file = event.target.files?.[0];
@@ -157,17 +127,15 @@ export const VerificationForm = () => {
         <div className="relative w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div 
             className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-500 ease-in-out"
-            style={{ width: `${((kycStep + 1) / 6) * 100}%` }}
+            style={{ width: `${(kycStep / 5) * 100}%` }}
           ></div>
         </div>
 
         {/* Step indicators */}
         <div className="flex justify-between mb-8">
-          <div className={`flex flex-col items-center ${kycStep >= 0 ? 'text-blue-500' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 0 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
-              <Wallet className="w-4 h-4" />
-            </div>
-            <span className="text-xs">Metamask</span>
+          <div className={`flex flex-col items-center ${kycStep >= 1 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>1</div>
+            <span className="text-xs">Informations</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 2 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 2 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>2</div>
@@ -186,48 +154,6 @@ export const VerificationForm = () => {
             <span className="text-xs">Confirmation</span>
           </div>
         </div>
-
-        {kycStep === 0 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-center">Do you have a Metamask wallet?</h2>
-            <p className="text-gray-600 text-center">
-              Choose whether you want to use Metamask for the KYC process
-            </p>
-            <div className="flex gap-4">
-              <Button
-                onClick={() => handleMetamaskChoice(true)}
-                className="flex-1 bg-green-500 hover:bg-green-600"
-              >
-                <Check className="mr-2" />
-                Yes, I have Metamask
-              </Button>
-              <Button
-                onClick={() => handleMetamaskChoice(false)}
-                variant="outline"
-                className="flex-1"
-              >
-                <X className="mr-2" />
-                No, I don't have Metamask
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {kycStep === 0.5 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-center">Connect your Metamask wallet</h2>
-            <p className="text-gray-600 text-center">
-              To continue, please connect your Metamask wallet
-            </p>
-            <Button
-              onClick={connectWallet}
-              className="w-full bg-blue-500 hover:bg-blue-600"
-            >
-              <Wallet className="mr-2" />
-              Connect Metamask
-            </Button>
-          </div>
-        )}
 
         {kycStep === 1 && (
           <div className="space-y-4">
@@ -479,31 +405,35 @@ export const VerificationForm = () => {
 
         {kycStep === 4 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Connexion du Wallet</h2>
+            <h2 className="text-2xl font-bold">Adresse de récompense</h2>
             <p className="text-gray-600">
-              Connectez votre wallet Metamask pour finaliser votre vérification.
+              Veuillez entrer votre adresse de wallet compatible EVM pour recevoir votre récompense d'inscription.
             </p>
             
-            {!walletAddress ? (
-              <Button 
-                onClick={connectWallet} 
-                className="w-full group flex items-center justify-center gap-2"
-              >
-                <Wallet className="w-5 h-5" />
-                Connecter Metamask
+            <div className="space-y-2">
+              <Label htmlFor="walletAddress">Adresse EVM</Label>
+              <Input
+                id="walletAddress"
+                placeholder="0x..."
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                className="font-mono"
+              />
+              <p className="text-sm text-gray-500">
+                L'adresse doit commencer par "0x" et contenir 42 caractères au total
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
+                <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                Retour
               </Button>
-            ) : (
-              <div className="space-y-2">
-                <p className="text-sm text-green-600 flex items-center">
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Wallet connecté : {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                </p>
-                <Button onClick={handleKycNext} className="w-full group">
-                  Finaliser la vérification
-                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
-            )}
+              <Button onClick={handleKycNext} className="flex-1 group">
+                Finaliser
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
           </div>
         )}
 
@@ -516,7 +446,7 @@ export const VerificationForm = () => {
             </p>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
-                Wallet associé : {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                Adresse de récompense : {walletAddress}
               </p>
             </div>
           </div>
