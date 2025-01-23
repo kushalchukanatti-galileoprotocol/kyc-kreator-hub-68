@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Check, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,8 @@ import { BrowserProvider } from "ethers";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
-  const [kycStep, setKycStep] = useState(1);
+  const [kycStep, setKycStep] = useState(0); // Commencer à 0 pour l'étape Metamask
+  const [hasMetamask, setHasMetamask] = useState<boolean | null>(null);
   const [documentType, setDocumentType] = useState<"id" | "passport">("id");
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [kycData, setKycData] = useState({
@@ -44,7 +45,6 @@ export const VerificationForm = () => {
       console.log("Metamask détecté, demande de connexion...");
       const provider = new BrowserProvider(window.ethereum);
       
-      // Demande explicite de connexion du compte
       const accounts = await provider.send("eth_requestAccounts", []);
       console.log("Comptes disponibles:", accounts);
       
@@ -56,7 +56,7 @@ export const VerificationForm = () => {
           title: "Wallet connecté",
           description: "Votre wallet Metamask a été connecté avec succès.",
         });
-        setKycStep(5); // Passer à l'étape finale après connexion réussie
+        setKycStep(1); // Passer à l'étape suivante après connexion réussie
       } else {
         console.error("Aucun compte disponible");
         toast({
@@ -71,6 +71,19 @@ export const VerificationForm = () => {
         title: "Erreur de connexion",
         description: "Une erreur est survenue lors de la connexion du wallet.",
         variant: "destructive",
+      });
+    }
+  };
+
+  const handleMetamaskChoice = (hasMetamask: boolean) => {
+    setHasMetamask(hasMetamask);
+    if (hasMetamask) {
+      connectWallet();
+    } else {
+      setKycStep(1); // Passer directement à l'étape suivante si pas de Metamask
+      toast({
+        title: "Continuer sans Metamask",
+        description: "Vous pouvez continuer le processus KYC sans wallet Metamask.",
       });
     }
   };
@@ -150,15 +163,17 @@ export const VerificationForm = () => {
         <div className="relative w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div 
             className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-500 ease-in-out"
-            style={{ width: `${(kycStep / 5) * 100}%` }}
+            style={{ width: `${((kycStep + 1) / 6) * 100}%` }}
           ></div>
         </div>
 
         {/* Step indicators */}
         <div className="flex justify-between mb-8">
-          <div className={`flex flex-col items-center ${kycStep >= 1 ? 'text-blue-500' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>1</div>
-            <span className="text-xs">Informations</span>
+          <div className={`flex flex-col items-center ${kycStep >= 0 ? 'text-blue-500' : 'text-gray-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 0 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+              <Wallet className="w-4 h-4" />
+            </div>
+            <span className="text-xs">Metamask</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 2 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 2 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>2</div>
@@ -177,6 +192,32 @@ export const VerificationForm = () => {
             <span className="text-xs">Confirmation</span>
           </div>
         </div>
+
+        {kycStep === 0 && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center">Avez-vous un wallet Metamask ?</h2>
+            <p className="text-gray-600 text-center">
+              Choisissez si vous souhaitez utiliser Metamask pour le processus KYC
+            </p>
+            <div className="flex gap-4">
+              <Button
+                onClick={() => handleMetamaskChoice(true)}
+                className="flex-1 bg-green-500 hover:bg-green-600"
+              >
+                <Check className="mr-2" />
+                Oui, j'ai Metamask
+              </Button>
+              <Button
+                onClick={() => handleMetamaskChoice(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                <X className="mr-2" />
+                Non, je n'ai pas Metamask
+              </Button>
+            </div>
+          </div>
+        )}
 
         {kycStep === 1 && (
           <div className="space-y-4">
