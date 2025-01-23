@@ -30,46 +30,40 @@ export const VerificationForm = () => {
 
   const connectWallet = async () => {
     try {
-      console.log("Tentative de connexion à Metamask...");
-      
-      if (!window.ethereum) {
-        console.error("Metamask non détecté");
+      if (typeof window.ethereum === 'undefined') {
+        console.error("Metamask not detected");
         toast({
-          title: "Metamask non détecté",
-          description: "Veuillez installer Metamask pour continuer.",
+          title: "Metamask not detected",
+          description: "Please install Metamask to continue.",
           variant: "destructive",
         });
         return;
       }
 
-      console.log("Metamask détecté, demande de connexion...");
+      console.log("Requesting account access...");
       const provider = new BrowserProvider(window.ethereum);
       
-      const accounts = await provider.send("eth_requestAccounts", []);
-      console.log("Comptes disponibles:", accounts);
-      
-      if (accounts.length > 0) {
+      // Request account access
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      console.log("Accounts:", accounts);
+
+      if (accounts && accounts.length > 0) {
         const address = accounts[0];
-        console.log("Wallet connecté:", address);
+        console.log("Connected wallet address:", address);
         setWalletAddress(address);
         toast({
-          title: "Wallet connecté",
-          description: "Votre wallet Metamask a été connecté avec succès.",
+          title: "Wallet connected",
+          description: "Your Metamask wallet has been connected successfully.",
         });
-        setKycStep(1); // Passer à l'étape suivante après connexion réussie
+        setKycStep(1);
       } else {
-        console.error("Aucun compte disponible");
-        toast({
-          title: "Erreur de connexion",
-          description: "Aucun compte Metamask n'a été trouvé.",
-          variant: "destructive",
-        });
+        throw new Error("No accounts found");
       }
     } catch (error) {
-      console.error("Erreur lors de la connexion du wallet:", error);
+      console.error("Error connecting wallet:", error);
       toast({
-        title: "Erreur de connexion",
-        description: "Une erreur est survenue lors de la connexion du wallet.",
+        title: "Connection error",
+        description: "Failed to connect to Metamask. Please try again.",
         variant: "destructive",
       });
     }
@@ -195,9 +189,9 @@ export const VerificationForm = () => {
 
         {kycStep === 0 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-center">Avez-vous un wallet Metamask ?</h2>
+            <h2 className="text-2xl font-bold text-center">Do you have a Metamask wallet?</h2>
             <p className="text-gray-600 text-center">
-              Choisissez si vous souhaitez utiliser Metamask pour le processus KYC
+              Choose whether you want to use Metamask for the KYC process
             </p>
             <div className="flex gap-4">
               <Button
@@ -205,7 +199,7 @@ export const VerificationForm = () => {
                 className="flex-1 bg-green-500 hover:bg-green-600"
               >
                 <Check className="mr-2" />
-                Oui, j'ai Metamask
+                Yes, I have Metamask
               </Button>
               <Button
                 onClick={() => handleMetamaskChoice(false)}
@@ -213,7 +207,7 @@ export const VerificationForm = () => {
                 className="flex-1"
               >
                 <X className="mr-2" />
-                Non, je n'ai pas Metamask
+                No, I don't have Metamask
               </Button>
             </div>
           </div>
@@ -221,16 +215,16 @@ export const VerificationForm = () => {
 
         {kycStep === 0.5 && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-center">Connectez votre wallet Metamask</h2>
+            <h2 className="text-2xl font-bold text-center">Connect your Metamask wallet</h2>
             <p className="text-gray-600 text-center">
-              Pour continuer, veuillez connecter votre wallet Metamask
+              To continue, please connect your Metamask wallet
             </p>
             <Button
               onClick={connectWallet}
               className="w-full bg-blue-500 hover:bg-blue-600"
             >
               <Wallet className="mr-2" />
-              Connecter Metamask
+              Connect Metamask
             </Button>
           </div>
         )}
