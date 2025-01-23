@@ -10,7 +10,7 @@ import { BrowserProvider } from "ethers";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
-  const [kycStep, setKycStep] = useState(0); // Commencer à 0 pour l'étape Metamask
+  const [kycStep, setKycStep] = useState(0);
   const [hasMetamask, setHasMetamask] = useState<boolean | null>(null);
   const [documentType, setDocumentType] = useState<"id" | "passport">("id");
   const [walletAddress, setWalletAddress] = useState<string>("");
@@ -78,7 +78,7 @@ export const VerificationForm = () => {
   const handleMetamaskChoice = (hasMetamask: boolean) => {
     setHasMetamask(hasMetamask);
     if (hasMetamask) {
-      connectWallet();
+      setKycStep(0.5); // Nouvelle étape intermédiaire pour la connexion Metamask
     } else {
       setKycStep(1); // Passer directement à l'étape suivante si pas de Metamask
       toast({
@@ -216,6 +216,22 @@ export const VerificationForm = () => {
                 Non, je n'ai pas Metamask
               </Button>
             </div>
+          </div>
+        )}
+
+        {kycStep === 0.5 && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center">Connectez votre wallet Metamask</h2>
+            <p className="text-gray-600 text-center">
+              Pour continuer, veuillez connecter votre wallet Metamask
+            </p>
+            <Button
+              onClick={connectWallet}
+              className="w-full bg-blue-500 hover:bg-blue-600"
+            >
+              <Wallet className="mr-2" />
+              Connecter Metamask
+            </Button>
           </div>
         )}
 
