@@ -14,33 +14,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Liste des pays avec leurs codes
+// List of countries with their codes
 const countryCodes = [
+  { country: "United States", code: "+1", id: "US" },
+  { country: "United Kingdom", code: "+44", id: "GB" },
   { country: "France", code: "+33", id: "FR" },
-  { country: "Belgique", code: "+32", id: "BE" },
-  { country: "Suisse", code: "+41", id: "CH" },
-  { country: "Luxembourg", code: "+352", id: "LU" },
+  { country: "Germany", code: "+49", id: "DE" },
   { country: "Canada", code: "+1", id: "CA" },
+  { country: "Australia", code: "+61", id: "AU" },
+  { country: "Singapore", code: "+65", id: "SG" },
+  { country: "Japan", code: "+81", id: "JP" },
+  { country: "Switzerland", code: "+41", id: "CH" },
+  { country: "Netherlands", code: "+31", id: "NL" },
 ];
 
 export const BusinessVerificationForm = () => {
   const { toast } = useToast();
   const [kybStep, setKybStep] = useState(1);
   const [walletAddress, setWalletAddress] = useState<string>("");
-  const [selectedCountryCode, setSelectedCountryCode] = useState("+33");
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+1");
   const [kybData, setKybData] = useState({
-    // Informations de l'entreprise
+    // Company Information
     companyName: "",
     registrationNumber: "",
     vatNumber: "",
     incorporationDate: "",
     companyType: "",
-    // Adresse de l'entreprise
+    // Company Address
     streetAddress: "",
     city: "",
     postalCode: "",
     country: "",
-    // Représentant légal
+    // Legal Representative
     legalRepFirstName: "",
     legalRepLastName: "",
     legalRepPosition: "",
@@ -59,7 +64,7 @@ export const BusinessVerificationForm = () => {
   };
 
   const validatePhoneNumber = (phone: string) => {
-    // Simplifie la validation : vérifie juste que le numéro contient entre 6 et 15 chiffres
+    // Simplified validation: checks if the number contains between 6 and 15 digits
     const phoneRegex = /^\d{6,15}$/;
     return phoneRegex.test(phone.replace(/\s/g, ''));
   };
@@ -68,8 +73,8 @@ export const BusinessVerificationForm = () => {
     if (kybStep === 1) {
       if (!kybData.companyName || !kybData.registrationNumber || !kybData.incorporationDate || !kybData.companyType) {
         toast({
-          title: "Informations manquantes",
-          description: "Veuillez remplir tous les champs obligatoires concernant l'entreprise.",
+          title: "Missing Information",
+          description: "Please fill in all required company information fields.",
           variant: "destructive",
         });
         return;
@@ -79,8 +84,8 @@ export const BusinessVerificationForm = () => {
     if (kybStep === 2) {
       if (!kybData.streetAddress || !kybData.city || !kybData.postalCode || !kybData.country) {
         toast({
-          title: "Adresse incomplète",
-          description: "Veuillez remplir tous les champs de l'adresse.",
+          title: "Incomplete Address",
+          description: "Please fill in all address fields.",
           variant: "destructive",
         });
         return;
@@ -91,8 +96,8 @@ export const BusinessVerificationForm = () => {
       if (!kybData.legalRepFirstName || !kybData.legalRepLastName || !kybData.legalRepPosition || 
           !kybData.legalRepEmail || !kybData.legalRepPhone) {
         toast({
-          title: "Informations du représentant manquantes",
-          description: "Veuillez remplir toutes les informations concernant le représentant légal.",
+          title: "Missing Representative Information",
+          description: "Please fill in all information about the legal representative.",
           variant: "destructive",
         });
         return;
@@ -100,8 +105,8 @@ export const BusinessVerificationForm = () => {
 
       if (!validatePhoneNumber(kybData.legalRepPhone)) {
         toast({
-          title: "Format de téléphone invalide",
-          description: "Veuillez entrer un numéro de téléphone valide (6-15 chiffres)",
+          title: "Invalid Phone Format",
+          description: "Please enter a valid phone number (6-15 digits)",
           variant: "destructive",
         });
         return;
@@ -111,8 +116,8 @@ export const BusinessVerificationForm = () => {
     if (kybStep === 4) {
       if (!kybData.registrationDoc || !kybData.articlesDoc) {
         toast({
-          title: "Documents manquants",
-          description: "Le certificat d'immatriculation et les statuts sont obligatoires.",
+          title: "Missing Documents",
+          description: "Certificate of Incorporation and Articles of Association are required.",
           variant: "destructive",
         });
         return;
@@ -122,8 +127,8 @@ export const BusinessVerificationForm = () => {
     if (kybStep === 5) {
       if (!walletAddress) {
         toast({
-          title: "Adresse manquante",
-          description: "Veuillez entrer votre adresse de wallet.",
+          title: "Missing Address",
+          description: "Please enter your wallet address.",
           variant: "destructive",
         });
         return;
@@ -131,8 +136,8 @@ export const BusinessVerificationForm = () => {
       
       if (!validateEVMAddress(walletAddress)) {
         toast({
-          title: "Adresse invalide",
-          description: "Veuillez entrer une adresse EVM valide (format: 0x...)",
+          title: "Invalid Address",
+          description: "Please enter a valid EVM address (format: 0x...)",
           variant: "destructive",
         });
         return;
@@ -152,8 +157,8 @@ export const BusinessVerificationForm = () => {
     if (file) {
       setKybData({ ...kybData, [type]: file });
       toast({
-        title: "Document téléchargé",
-        description: `${file.name} a été téléchargé avec succès.`,
+        title: "Document Uploaded",
+        description: `${file.name} has been uploaded successfully.`,
       });
     }
   };
@@ -175,19 +180,19 @@ export const BusinessVerificationForm = () => {
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kybStep >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
               <Building className="w-4 h-4" />
             </div>
-            <span className="text-xs">Entreprise</span>
+            <span className="text-xs">Company</span>
           </div>
           <div className={`flex flex-col items-center ${kybStep >= 2 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kybStep >= 2 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
               <Globe className="w-4 h-4" />
             </div>
-            <span className="text-xs">Adresse</span>
+            <span className="text-xs">Address</span>
           </div>
           <div className={`flex flex-col items-center ${kybStep >= 3 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kybStep >= 3 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
               <User className="w-4 h-4" />
             </div>
-            <span className="text-xs">Représentant</span>
+            <span className="text-xs">Representative</span>
           </div>
           <div className={`flex flex-col items-center ${kybStep >= 4 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kybStep >= 4 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
@@ -211,27 +216,27 @@ export const BusinessVerificationForm = () => {
 
         {kybStep === 1 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Informations de l'entreprise</h2>
+            <h2 className="text-2xl font-bold">Company Information</h2>
             <div className="space-y-3">
               <Input
-                placeholder="Nom de l'entreprise"
+                placeholder="Company Name"
                 value={kybData.companyName}
                 onChange={(e) => setKybData({ ...kybData, companyName: e.target.value })}
                 required
               />
               <Input
-                placeholder="Numéro d'immatriculation"
+                placeholder="Registration Number"
                 value={kybData.registrationNumber}
                 onChange={(e) => setKybData({ ...kybData, registrationNumber: e.target.value })}
                 required
               />
               <Input
-                placeholder="Numéro de TVA (optionnel)"
+                placeholder="VAT Number (optional)"
                 value={kybData.vatNumber}
                 onChange={(e) => setKybData({ ...kybData, vatNumber: e.target.value })}
               />
               <div className="space-y-2">
-                <Label>Date de création</Label>
+                <Label>Date of Incorporation</Label>
                 <Input
                   type="date"
                   value={kybData.incorporationDate}
@@ -245,104 +250,113 @@ export const BusinessVerificationForm = () => {
               >
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <RadioGroupItem value="sarl" id="sarl" className="peer sr-only" />
+                    <RadioGroupItem value="llc" id="llc" className="peer sr-only" />
                     <Label
-                      htmlFor="sarl"
+                      htmlFor="llc"
                       className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                     >
-                      <span>SARL</span>
+                      <span>LLC</span>
                     </Label>
                   </div>
                   <div>
-                    <RadioGroupItem value="sas" id="sas" className="peer sr-only" />
+                    <RadioGroupItem value="corporation" id="corporation" className="peer sr-only" />
                     <Label
-                      htmlFor="sas"
+                      htmlFor="corporation"
                       className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                     >
-                      <span>SAS</span>
+                      <span>Corporation</span>
                     </Label>
                   </div>
                 </div>
               </RadioGroup>
             </div>
-            <Button onClick={handleKybNext} className="w-full">Suivant</Button>
+            <Button onClick={handleKybNext} className="w-full">Next</Button>
           </div>
         )}
 
         {kybStep === 2 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Adresse de l'entreprise</h2>
+            <h2 className="text-2xl font-bold">Company Address</h2>
             <div className="space-y-3">
               <Input
-                placeholder="Adresse"
+                placeholder="Street Address"
                 value={kybData.streetAddress}
                 onChange={(e) => setKybData({ ...kybData, streetAddress: e.target.value })}
                 required
               />
               <Input
-                placeholder="Ville"
+                placeholder="City"
                 value={kybData.city}
                 onChange={(e) => setKybData({ ...kybData, city: e.target.value })}
                 required
               />
               <Input
-                placeholder="Code postal"
+                placeholder="Postal Code"
                 value={kybData.postalCode}
                 onChange={(e) => setKybData({ ...kybData, postalCode: e.target.value })}
                 required
               />
-              <Input
-                placeholder="Pays"
+              <Select
                 value={kybData.country}
-                onChange={(e) => setKybData({ ...kybData, country: e.target.value })}
-                required
-              />
+                onValueChange={(value) => setKybData({ ...kybData, country: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countryCodes.map((country) => (
+                    <SelectItem key={country.id} value={country.id}>
+                      {country.country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex gap-4">
-              <Button onClick={handleKybBack} variant="outline" className="flex-1">Retour</Button>
-              <Button onClick={handleKybNext} className="flex-1">Suivant</Button>
+              <Button onClick={handleKybBack} variant="outline" className="flex-1">Back</Button>
+              <Button onClick={handleKybNext} className="flex-1">Next</Button>
             </div>
           </div>
         )}
 
         {kybStep === 3 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Représentant légal</h2>
+            <h2 className="text-2xl font-bold">Legal Representative</h2>
             <div className="space-y-3">
               <Input
-                placeholder="Prénom"
+                placeholder="First Name"
                 value={kybData.legalRepFirstName}
                 onChange={(e) => setKybData({ ...kybData, legalRepFirstName: e.target.value })}
                 required
               />
               <Input
-                placeholder="Nom"
+                placeholder="Last Name"
                 value={kybData.legalRepLastName}
                 onChange={(e) => setKybData({ ...kybData, legalRepLastName: e.target.value })}
                 required
               />
               <Input
-                placeholder="Fonction"
+                placeholder="Position"
                 value={kybData.legalRepPosition}
                 onChange={(e) => setKybData({ ...kybData, legalRepPosition: e.target.value })}
                 required
               />
               <Input
                 type="email"
-                placeholder="Email professionnel"
+                placeholder="Business Email"
                 value={kybData.legalRepEmail}
                 onChange={(e) => setKybData({ ...kybData, legalRepEmail: e.target.value })}
                 required
               />
               <div className="space-y-2">
-                <Label>Numéro de téléphone</Label>
+                <Label>Phone Number</Label>
                 <div className="flex gap-2">
                   <Select
                     value={selectedCountryCode}
                     onValueChange={setSelectedCountryCode}
                   >
                     <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Code pays" />
+                      <SelectValue placeholder="Country Code" />
                     </SelectTrigger>
                     <SelectContent>
                       {countryCodes.map((country) => (
@@ -354,7 +368,7 @@ export const BusinessVerificationForm = () => {
                   </Select>
                   <Input
                     type="tel"
-                    placeholder="612345678"
+                    placeholder="2025550123"
                     value={kybData.legalRepPhone}
                     onChange={(e) => setKybData({ ...kybData, legalRepPhone: e.target.value })}
                     required
@@ -362,28 +376,28 @@ export const BusinessVerificationForm = () => {
                   />
                 </div>
                 <p className="text-sm text-gray-500">
-                  Format: numéro sans espaces (ex: 612345678)
+                  Format: numbers only, no spaces (e.g., 2025550123)
                 </p>
               </div>
             </div>
             <div className="flex gap-4">
-              <Button onClick={handleKybBack} variant="outline" className="flex-1">Retour</Button>
-              <Button onClick={handleKybNext} className="flex-1">Suivant</Button>
+              <Button onClick={handleKybBack} variant="outline" className="flex-1">Back</Button>
+              <Button onClick={handleKybNext} className="flex-1">Next</Button>
             </div>
           </div>
         )}
 
         {kybStep === 4 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Documents requis</h2>
+            <h2 className="text-2xl font-bold">Required Documents</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="font-semibold mb-2">Instructions pour les documents :</h3>
+              <h3 className="font-semibold mb-2">Document Guidelines:</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                <li>Les documents doivent être lisibles et complets</li>
-                <li>Format accepté : PDF, JPG, PNG (max 10MB)</li>
-                <li>Les documents doivent être en cours de validité</li>
-                <li>Les documents en langue étrangère doivent être traduits</li>
+                <li>Documents must be clear and complete</li>
+                <li>Accepted formats: PDF, JPG, PNG (max 10MB)</li>
+                <li>Documents must be current and valid</li>
+                <li>Non-English documents require certified translation</li>
               </ul>
             </div>
 
@@ -393,8 +407,8 @@ export const BusinessVerificationForm = () => {
                 onClick={() => document.getElementById('registrationDoc')?.click()}
               >
                 <Database className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 font-medium">Certificat d'immatriculation</p>
-                <p className="text-sm text-gray-500 mt-1">Extrait K-bis de moins de 3 mois</p>
+                <p className="mt-2 font-medium">Certificate of Incorporation</p>
+                <p className="text-sm text-gray-500 mt-1">Recent business registration document</p>
                 <input
                   id="registrationDoc"
                   type="file"
@@ -406,7 +420,7 @@ export const BusinessVerificationForm = () => {
               {kybData.registrationDoc && (
                 <p className="text-sm text-green-600 flex items-center">
                   <Check className="w-4 h-4 mr-2" />
-                  Document téléchargé : {kybData.registrationDoc.name}
+                  Document uploaded: {kybData.registrationDoc.name}
                 </p>
               )}
 
@@ -415,8 +429,8 @@ export const BusinessVerificationForm = () => {
                 onClick={() => document.getElementById('articlesDoc')?.click()}
               >
                 <Database className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 font-medium">Statuts de l'entreprise</p>
-                <p className="text-sm text-gray-500 mt-1">Dernière version à jour des statuts</p>
+                <p className="mt-2 font-medium">Articles of Association</p>
+                <p className="text-sm text-gray-500 mt-1">Current version of company bylaws</p>
                 <input
                   id="articlesDoc"
                   type="file"
@@ -428,7 +442,7 @@ export const BusinessVerificationForm = () => {
               {kybData.articlesDoc && (
                 <p className="text-sm text-green-600 flex items-center">
                   <Check className="w-4 h-4 mr-2" />
-                  Document téléchargé : {kybData.articlesDoc.name}
+                  Document uploaded: {kybData.articlesDoc.name}
                 </p>
               )}
 
@@ -437,8 +451,8 @@ export const BusinessVerificationForm = () => {
                 onClick={() => document.getElementById('financialDoc')?.click()}
               >
                 <Database className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 font-medium">États financiers (optionnel)</p>
-                <p className="text-sm text-gray-500 mt-1">Dernier bilan et compte de résultat</p>
+                <p className="mt-2 font-medium">Financial Statements (optional)</p>
+                <p className="text-sm text-gray-500 mt-1">Latest balance sheet and income statement</p>
                 <input
                   id="financialDoc"
                   type="file"
@@ -450,27 +464,27 @@ export const BusinessVerificationForm = () => {
               {kybData.financialDoc && (
                 <p className="text-sm text-green-600 flex items-center">
                   <Check className="w-4 h-4 mr-2" />
-                  Document téléchargé : {kybData.financialDoc.name}
+                  Document uploaded: {kybData.financialDoc.name}
                 </p>
               )}
             </div>
 
             <div className="flex gap-4">
-              <Button onClick={handleKybBack} variant="outline" className="flex-1">Retour</Button>
-              <Button onClick={handleKybNext} className="flex-1">Suivant</Button>
+              <Button onClick={handleKybBack} variant="outline" className="flex-1">Back</Button>
+              <Button onClick={handleKybNext} className="flex-1">Next</Button>
             </div>
           </div>
         )}
 
         {kybStep === 5 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Adresse de récompense</h2>
+            <h2 className="text-2xl font-bold">Reward Address</h2>
             <p className="text-gray-600">
-              Veuillez entrer l'adresse de wallet de l'entreprise pour recevoir la récompense d'inscription.
+              Please enter your company's wallet address to receive the registration reward.
             </p>
             
             <div className="space-y-2">
-              <Label htmlFor="walletAddress">Adresse EVM</Label>
+              <Label htmlFor="walletAddress">EVM Address</Label>
               <Input
                 id="walletAddress"
                 placeholder="0x..."
@@ -479,13 +493,13 @@ export const BusinessVerificationForm = () => {
                 className="font-mono"
               />
               <p className="text-sm text-gray-500">
-                L'adresse doit commencer par "0x" et contenir 42 caractères au total
+                Address must start with "0x" and contain 42 characters in total
               </p>
             </div>
 
             <div className="flex gap-4">
-              <Button onClick={handleKybBack} variant="outline" className="flex-1">Retour</Button>
-              <Button onClick={handleKybNext} className="flex-1">Finaliser</Button>
+              <Button onClick={handleKybBack} variant="outline" className="flex-1">Back</Button>
+              <Button onClick={handleKybNext} className="flex-1">Finalize</Button>
             </div>
           </div>
         )}
@@ -493,23 +507,23 @@ export const BusinessVerificationForm = () => {
         {kybStep === 6 && (
           <div className="text-center space-y-4">
             <Check className="mx-auto h-16 w-16 text-green-500" />
-            <h2 className="text-2xl font-bold">Vérification Soumise</h2>
+            <h2 className="text-2xl font-bold">Verification Submitted</h2>
             <p className="text-gray-600">
-              Nous examinerons les informations de votre entreprise et reviendrons vers vous rapidement.
+              We will review your company information and get back to you shortly.
             </p>
             <div className="p-4 bg-blue-50 rounded-lg space-y-3">
               <div className="flex items-center justify-center text-blue-600 gap-2">
                 <Clock3 className="h-5 w-5" />
-                <p className="font-medium">Délai de traitement estimé</p>
+                <p className="font-medium">Estimated Processing Time</p>
               </div>
               <p className="text-sm text-gray-600">
-                La vérification de votre dossier prend généralement entre 3 et 5 jours ouvrés.
-                Vous recevrez un email dès que votre vérification sera terminée.
+                Your application typically takes 3-5 business days to process.
+                You will receive an email once your verification is complete.
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
-                Adresse de récompense : {walletAddress}
+                Reward Address: {walletAddress}
               </p>
             </div>
           </div>
