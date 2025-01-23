@@ -569,7 +569,7 @@ export const VerificationForm = () => {
             </p>
             <div className="p-4 bg-blue-50 rounded-lg space-y-3">
               <div className="flex items-center justify-center text-blue-600 gap-2">
-                <Clock className="h-5 w-5" />
+                <Clock3 className="h-5 w-5" />
                 <p className="font-medium">Délai de traitement estimé</p>
               </div>
               <p className="text-sm text-gray-600">
