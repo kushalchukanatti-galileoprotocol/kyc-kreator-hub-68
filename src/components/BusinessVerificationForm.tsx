@@ -6,11 +6,28 @@ import { Building, Briefcase, Factory, Database, Shield, Check, X, Info, User, U
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Liste des pays avec leurs codes
+const countryCodes = [
+  { country: "France", code: "+33", id: "FR" },
+  { country: "Belgique", code: "+32", id: "BE" },
+  { country: "Suisse", code: "+41", id: "CH" },
+  { country: "Luxembourg", code: "+352", id: "LU" },
+  { country: "Canada", code: "+1", id: "CA" },
+];
 
 export const BusinessVerificationForm = () => {
   const { toast } = useToast();
   const [kybStep, setKybStep] = useState(1);
   const [walletAddress, setWalletAddress] = useState<string>("");
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+33");
   const [kybData, setKybData] = useState({
     // Informations de l'entreprise
     companyName: "",
@@ -42,8 +59,9 @@ export const BusinessVerificationForm = () => {
   };
 
   const validatePhoneNumber = (phone: string) => {
-    const phoneRegex = /^\+[1-9]\d{1,2}[ ]\d{3}[ ]\d{3}[ ]\d{3}$/;
-    return phoneRegex.test(phone);
+    // Simplifie la validation : vérifie juste que le numéro contient entre 6 et 15 chiffres
+    const phoneRegex = /^\d{6,15}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
   };
 
   const handleKybNext = () => {
@@ -83,7 +101,7 @@ export const BusinessVerificationForm = () => {
       if (!validatePhoneNumber(kybData.legalRepPhone)) {
         toast({
           title: "Format de téléphone invalide",
-          description: "Veuillez entrer un numéro de téléphone au format international (ex: +33 612 345 678)",
+          description: "Veuillez entrer un numéro de téléphone valide (6-15 chiffres)",
           variant: "destructive",
         });
         return;
@@ -317,15 +335,35 @@ export const BusinessVerificationForm = () => {
                 required
               />
               <div className="space-y-2">
-                <Label htmlFor="phone">Numéro de téléphone (Format: +XX XXX XXX XXX)</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="+33 612 345 678"
-                  value={kybData.legalRepPhone}
-                  onChange={(e) => setKybData({ ...kybData, legalRepPhone: e.target.value })}
-                  required
-                />
+                <Label>Numéro de téléphone</Label>
+                <div className="flex gap-2">
+                  <Select
+                    value={selectedCountryCode}
+                    onValueChange={setSelectedCountryCode}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue placeholder="Code pays" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryCodes.map((country) => (
+                        <SelectItem key={country.id} value={country.code}>
+                          {country.country} ({country.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    type="tel"
+                    placeholder="612345678"
+                    value={kybData.legalRepPhone}
+                    onChange={(e) => setKybData({ ...kybData, legalRepPhone: e.target.value })}
+                    required
+                    className="flex-1"
+                  />
+                </div>
+                <p className="text-sm text-gray-500">
+                  Format: numéro sans espaces (ex: 612345678)
+                </p>
               </div>
             </div>
             <div className="flex gap-4">
