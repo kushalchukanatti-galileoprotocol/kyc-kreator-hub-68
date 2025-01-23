@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Building, Briefcase, Factory, Database, Shield, Check, X, Info, User, Users, Globe } from "lucide-react";
+import { Building, Briefcase, Factory, Database, Shield, Check, X, Info, User, Users, Globe, Clock3 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -461,7 +461,7 @@ export const BusinessVerificationForm = () => {
             </p>
             <div className="p-4 bg-blue-50 rounded-lg space-y-3">
               <div className="flex items-center justify-center text-blue-600 gap-2">
-                <Clock className="h-5 w-5" />
+                <Clock3 className="h-5 w-5" />
                 <p className="font-medium">Délai de traitement estimé</p>
               </div>
               <p className="text-sm text-gray-600">
