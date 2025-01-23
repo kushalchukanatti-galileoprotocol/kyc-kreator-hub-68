@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Check } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -36,12 +36,34 @@ export const VerificationForm = () => {
     return evmAddressRegex.test(address);
   };
 
+  const validateAge = (birthDate: string) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    
+    return age >= 18;
+  };
+
   const handleKycNext = () => {
     if (kycStep === 1) {
       if (!kycData.firstName || !kycData.lastName || !kycData.dateOfBirth || !kycData.email || !kycData.phone) {
         toast({
           title: "Informations manquantes",
           description: "Veuillez remplir tous les champs obligatoires avant de continuer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validateAge(kycData.dateOfBirth)) {
+        toast({
+          title: "Âge minimum requis",
+          description: "Vous devez avoir au moins 18 ans pour continuer.",
           variant: "destructive",
         });
         return;
@@ -192,16 +214,20 @@ export const VerificationForm = () => {
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
-              <Input
-                type="date"
-                placeholder="Date de naissance"
-                value={kycData.dateOfBirth}
-                onChange={(e) =>
-                  setKycData({ ...kycData, dateOfBirth: e.target.value })
-                }
-                required
-                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="dateOfBirth">Date de naissance (18 ans minimum requis)</Label>
+                <Input
+                  id="dateOfBirth"
+                  type="date"
+                  value={kycData.dateOfBirth}
+                  onChange={(e) =>
+                    setKycData({ ...kycData, dateOfBirth: e.target.value })
+                  }
+                  required
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
+                  className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+                />
+              </div>
               <Input
                 type="email"
                 placeholder="Adresse email"
