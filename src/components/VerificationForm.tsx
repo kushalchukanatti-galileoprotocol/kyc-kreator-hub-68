@@ -264,6 +264,18 @@ export const VerificationForm = () => {
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Document d'identité</h2>
             
+            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+              <h3 className="font-semibold mb-2">Instructions pour la photo du document :</h3>
+              <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
+                <li>Placez le document sur une surface plane et bien éclairée</li>
+                <li>Assurez-vous que tous les coins sont visibles dans le cadre</li>
+                <li>Évitez les reflets et les ombres sur le document</li>
+                <li>Vérifiez que le texte est lisible et net</li>
+                <li>Le document doit être en cours de validité</li>
+                <li>Format accepté : JPG, PNG (max 5MB)</li>
+              </ul>
+            </div>
+            
             <RadioGroup
               defaultValue="id"
               value={documentType}
@@ -325,8 +337,8 @@ export const VerificationForm = () => {
                 >
                   <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
                   <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-secondary transition-colors" />
-                  <p className="mt-2">Recto de la carte d'identité</p>
-                  <p className="text-sm text-gray-500 mt-1">Cliquez ou glissez-déposez votre fichier ici</p>
+                  <p className="mt-2 font-medium">Recto de la carte d'identité</p>
+                  <p className="text-sm text-gray-500 mt-1">Assurez-vous que la photo et les informations sont clairement visibles</p>
                   <input
                     id="idFront"
                     type="file"
@@ -348,8 +360,8 @@ export const VerificationForm = () => {
                 >
                   <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
                   <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-secondary transition-colors" />
-                  <p className="mt-2">Verso de la carte d'identité</p>
-                  <p className="text-sm text-gray-500 mt-1">Cliquez ou glissez-déposez votre fichier ici</p>
+                  <p className="mt-2 font-medium">Verso de la carte d'identité</p>
+                  <p className="text-sm text-gray-500 mt-1">La signature et le code MRZ doivent être clairement visibles</p>
                   <input
                     id="idBack"
                     type="file"
@@ -373,8 +385,8 @@ export const VerificationForm = () => {
                 >
                   <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
                   <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-secondary transition-colors" />
-                  <p className="mt-2">Page principale du passeport</p>
-                  <p className="text-sm text-gray-500 mt-1">Cliquez ou glissez-déposez votre fichier ici</p>
+                  <p className="mt-2 font-medium">Page principale du passeport</p>
+                  <p className="text-sm text-gray-500 mt-1">La photo et la zone MRZ doivent être parfaitement lisibles</p>
                   <input
                     id="passportPage"
                     type="file"
@@ -408,14 +420,27 @@ export const VerificationForm = () => {
         {kycStep === 3 && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Vérification par Selfie</h2>
+            
+            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+              <h3 className="font-semibold mb-2">Instructions pour le selfie :</h3>
+              <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
+                <li>Assurez-vous d'être dans un endroit bien éclairé</li>
+                <li>Regardez directement vers la caméra</li>
+                <li>Votre visage doit être centré et clairement visible</li>
+                <li>Ne portez pas de lunettes de soleil ou de chapeau</li>
+                <li>Évitez les arrière-plans trop sombres ou encombrés</li>
+                <li>Prenez la photo vous-même (pas de selfie pris par quelqu'un d'autre)</li>
+              </ul>
+            </div>
+
             <div 
               className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-secondary transition-colors relative group"
               onClick={() => document.getElementById('selfie')?.click()}
             >
               <div className="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"></div>
               <Camera className="mx-auto h-12 w-12 text-gray-400 group-hover:text-secondary transition-colors" />
-              <p className="mt-2">Prenez un selfie pour la vérification</p>
-              <p className="text-sm text-gray-500 mt-1">Assurez-vous que votre visage est bien visible</p>
+              <p className="mt-2 font-medium">Prenez un selfie pour la vérification</p>
+              <p className="text-sm text-gray-500 mt-1">La photo doit être récente et vous ressembler</p>
               <input
                 id="selfie"
                 type="file"
@@ -431,6 +456,7 @@ export const VerificationForm = () => {
                 Selfie téléchargé : {(kycData.selfie as File).name}
               </p>
             )}
+
             <div className="flex gap-4">
               <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
                 <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
