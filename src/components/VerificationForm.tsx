@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet } from "lucide-react";
+import { Upload, Camera, CheckCircle, ArrowLeft, ArrowRight, Wallet, Clock } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -515,6 +515,16 @@ export const VerificationForm = () => {
             <p className="text-gray-600">
               Nous examinerons vos informations et reviendrons vers vous rapidement.
             </p>
+            <div className="p-4 bg-blue-50 rounded-lg space-y-3">
+              <div className="flex items-center justify-center text-blue-600 gap-2">
+                <Clock className="h-5 w-5" />
+                <p className="font-medium">Délai de traitement estimé</p>
+              </div>
+              <p className="text-sm text-gray-600">
+                La vérification de votre dossier prend généralement entre 24 et 48 heures ouvrées.
+                Vous recevrez un email dès que votre vérification sera terminée.
+              </p>
+            </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
                 Adresse de récompense : {walletAddress}
