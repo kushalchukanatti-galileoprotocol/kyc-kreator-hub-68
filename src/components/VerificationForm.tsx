@@ -25,6 +25,12 @@ export const VerificationForm = () => {
     selfie: null as File | null,
   });
 
+  const validatePhoneNumber = (phone: string) => {
+    // Format international : +XX XXX XXX XXX
+    const phoneRegex = /^\+[1-9]\d{1,2}[ ]\d{3}[ ]\d{3}[ ]\d{3}$/;
+    return phoneRegex.test(phone);
+  };
+
   const validateEVMAddress = (address: string) => {
     const evmAddressRegex = /^0x[a-fA-F0-9]{40}$/;
     return evmAddressRegex.test(address);
@@ -36,6 +42,15 @@ export const VerificationForm = () => {
         toast({
           title: "Informations manquantes",
           description: "Veuillez remplir tous les champs obligatoires avant de continuer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!validatePhoneNumber(kycData.phone)) {
+        toast({
+          title: "Format de téléphone invalide",
+          description: "Veuillez entrer un numéro de téléphone au format international (ex: +33 612 345 678)",
           variant: "destructive",
         });
         return;
@@ -197,16 +212,20 @@ export const VerificationForm = () => {
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
-              <Input
-                type="tel"
-                placeholder="Numéro de téléphone"
-                value={kycData.phone}
-                onChange={(e) =>
-                  setKycData({ ...kycData, phone: e.target.value })
-                }
-                required
-                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="phone">Numéro de téléphone (Format: +XX XXX XXX XXX)</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+33 612 345 678"
+                  value={kycData.phone}
+                  onChange={(e) =>
+                    setKycData({ ...kycData, phone: e.target.value })
+                  }
+                  required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+                />
+              </div>
             </div>
             <Button onClick={handleKycNext} className="w-full group">
               Étape suivante : Document d'identité
