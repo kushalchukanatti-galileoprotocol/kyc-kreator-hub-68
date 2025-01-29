@@ -8,11 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Header = () => {
   const location = useLocation();
-  const [language, setLanguage] = useState("en");
+  const { language, setLanguage, t } = useLanguage();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -33,7 +33,7 @@ export const Header = () => {
                 isActive("/kyc") && "text-white font-semibold"
               )}
             >
-              Individual Verification
+              {t("individual.verification")}
             </Link>
             <Link
               to="/kyb"
@@ -42,7 +42,7 @@ export const Header = () => {
                 isActive("/kyb") && "text-white font-semibold"
               )}
             >
-              Business Verification
+              {t("business.verification")}
             </Link>
           </nav>
 
