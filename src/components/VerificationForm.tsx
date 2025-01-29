@@ -7,9 +7,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const VerificationForm = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [kycStep, setKycStep] = useState(1);
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [wantsRewards, setWantsRewards] = useState<boolean>(true);
@@ -55,8 +57,8 @@ export const VerificationForm = () => {
     if (kycStep === 1) {
       if (!kycData.firstName || !kycData.lastName || !kycData.dateOfBirth || !kycData.email || !kycData.phone) {
         toast({
-          title: "Informations manquantes",
-          description: "Veuillez remplir tous les champs obligatoires avant de continuer.",
+          title: t("missing.info"),
+          description: t("fill.required"),
           variant: "destructive",
         });
         return;
@@ -64,8 +66,8 @@ export const VerificationForm = () => {
 
       if (!validateAge(kycData.dateOfBirth)) {
         toast({
-          title: "Âge minimum requis",
-          description: "Vous devez avoir au moins 18 ans pour continuer.",
+          title: t("min.age"),
+          description: t("age.requirement"),
           variant: "destructive",
         });
         return;
@@ -73,8 +75,8 @@ export const VerificationForm = () => {
 
       if (!validatePhoneNumber(kycData.phone)) {
         toast({
-          title: "Format de téléphone invalide",
-          description: "Veuillez entrer un numéro de téléphone au format international (ex: +33 612 345 678)",
+          title: t("invalid.phone"),
+          description: t("phone.format"),
           variant: "destructive",
         });
         return;
@@ -174,32 +176,32 @@ export const VerificationForm = () => {
         <div className="flex justify-between mb-8">
           <div className={`flex flex-col items-center ${kycStep >= 1 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>1</div>
-            <span className="text-xs">Informations</span>
+            <span className="text-xs">{t("personal.info")}</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 2 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 2 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>2</div>
-            <span className="text-xs">Document</span>
+            <span className="text-xs">{t("id.verification")}</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 3 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 3 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>3</div>
-            <span className="text-xs">Selfie</span>
+            <span className="text-xs">{t("selfie.verification")}</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 4 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 4 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>4</div>
-            <span className="text-xs">Wallet</span>
+            <span className="text-xs">{t("reward.address")}</span>
           </div>
           <div className={`flex flex-col items-center ${kycStep >= 5 ? 'text-blue-500' : 'text-gray-400'}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${kycStep >= 5 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>5</div>
-            <span className="text-xs">Confirmation</span>
+            <span className="text-xs">{t("verification.submitted")}</span>
           </div>
         </div>
 
         {kycStep === 1 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Informations Personnelles</h2>
+            <h2 className="text-2xl font-bold">{t("personal.info")}</h2>
             <div className="space-y-3">
               <Input
-                placeholder="Prénom"
+                placeholder={t("first.name")}
                 value={kycData.firstName}
                 onChange={(e) =>
                   setKycData({ ...kycData, firstName: e.target.value })
@@ -208,7 +210,7 @@ export const VerificationForm = () => {
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
               <Input
-                placeholder="Nom"
+                placeholder={t("last.name")}
                 value={kycData.lastName}
                 onChange={(e) =>
                   setKycData({ ...kycData, lastName: e.target.value })
@@ -217,7 +219,7 @@ export const VerificationForm = () => {
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
               <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date de naissance (18 ans minimum requis)</Label>
+                <Label htmlFor="dateOfBirth">{t("date.of.birth")}</Label>
                 <Input
                   id="dateOfBirth"
                   type="date"
@@ -232,7 +234,7 @@ export const VerificationForm = () => {
               </div>
               <Input
                 type="email"
-                placeholder="Adresse email"
+                placeholder={t("email")}
                 value={kycData.email}
                 onChange={(e) =>
                   setKycData({ ...kycData, email: e.target.value })
@@ -241,7 +243,7 @@ export const VerificationForm = () => {
                 className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
               />
               <div className="space-y-2">
-                <Label htmlFor="phone">Numéro de téléphone (Format: +XX XXX XXX XXX)</Label>
+                <Label htmlFor="phone">{t("phone")}</Label>
                 <Input
                   id="phone"
                   type="tel"
@@ -256,7 +258,7 @@ export const VerificationForm = () => {
               </div>
             </div>
             <Button onClick={handleKycNext} className="w-full group">
-              Étape suivante : Document d'identité
+              {t("next.step")}
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
@@ -264,17 +266,17 @@ export const VerificationForm = () => {
 
         {kycStep === 2 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Document d'identité</h2>
+            <h2 className="text-2xl font-bold">{t("id.verification")}</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="font-semibold mb-2">Instructions pour la photo du document :</h3>
+              <h3 className="font-semibold mb-2">{t("document.instructions")}</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                <li>Placez le document sur une surface plane et bien éclairée</li>
-                <li>Assurez-vous que tous les coins sont visibles dans le cadre</li>
-                <li>Évitez les reflets et les ombres sur le document</li>
-                <li>Vérifiez que le texte est lisible et net</li>
-                <li>Le document doit être en cours de validité</li>
-                <li>Format accepté : JPG, PNG (max 5MB)</li>
+                <li>{t("doc.instruction.1")}</li>
+                <li>{t("doc.instruction.2")}</li>
+                <li>{t("doc.instruction.3")}</li>
+                <li>{t("doc.instruction.4")}</li>
+                <li>{t("doc.instruction.5")}</li>
+                <li>{t("doc.format")}</li>
               </ul>
             </div>
             
@@ -409,10 +411,10 @@ export const VerificationForm = () => {
             <div className="flex gap-4">
               <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
                 <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                Retour
+                {t("back")}
               </Button>
               <Button onClick={handleKycNext} className="flex-1 group">
-                Étape suivante : Selfie
+                {t("next.step")}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
@@ -421,17 +423,16 @@ export const VerificationForm = () => {
 
         {kycStep === 3 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Vérification par Selfie</h2>
+            <h2 className="text-2xl font-bold">{t("selfie.verification")}</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="font-semibold mb-2">Instructions pour le selfie :</h3>
+              <h3 className="font-semibold mb-2">{t("selfie.instructions")}</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                <li>Assurez-vous d'être dans un endroit bien éclairé</li>
-                <li>Regardez directement vers la caméra</li>
-                <li>Votre visage doit être centré et clairement visible</li>
-                <li>Ne portez pas de lunettes de soleil ou de chapeau</li>
-                <li>Évitez les arrière-plans trop sombres ou encombrés</li>
-                <li>Prenez la photo vous-même (pas de selfie pris par quelqu'un d'autre)</li>
+                <li>{t("selfie.instruction.1")}</li>
+                <li>{t("selfie.instruction.2")}</li>
+                <li>{t("selfie.instruction.3")}</li>
+                <li>{t("selfie.instruction.4")}</li>
+                <li>{t("selfie.instruction.5")}</li>
               </ul>
             </div>
 
@@ -462,14 +463,10 @@ export const VerificationForm = () => {
             <div className="flex gap-4">
               <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
                 <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                Retour
+                {t("back")}
               </Button>
-              <Button 
-                onClick={handleKycNext} 
-                className="flex-1 group"
-                disabled={!kycData.selfie}
-              >
-                Soumettre la vérification
+              <Button onClick={handleKycNext} className="flex-1 group">
+                {t("next.step")}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
@@ -478,17 +475,17 @@ export const VerificationForm = () => {
 
         {kycStep === 4 && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Adresse de récompense</h2>
+            <h2 className="text-2xl font-bold">{t("reward.address")}</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
               <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <Wallet className="h-5 w-5 text-blue-600" />
-                Informations importantes concernant les récompenses
+                {t("wallet.info")}
               </h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                <li>Un wallet compatible EVM est nécessaire pour recevoir vos tokens RIWA</li>
-                <li>Si vous n'avez pas encore de wallet, vous pouvez en créer un facilement avec MetaMask</li>
-                <li>Vous pouvez aussi choisir de ne pas recevoir de récompense</li>
+                <li>{t("wallet.instruction.1")}</li>
+                <li>{t("wallet.instruction.2")}</li>
+                <li>{t("wallet.instruction.3")}</li>
               </ul>
               <a 
                 href="https://metamask.io/download/" 
@@ -497,7 +494,7 @@ export const VerificationForm = () => {
                 className="inline-flex items-center mt-4 text-blue-600 hover:text-blue-700 font-medium"
               >
                 <ArrowRight className="mr-2 h-4 w-4" />
-                Créer un wallet avec MetaMask
+                {t("create.wallet")}
               </a>
             </div>
 
@@ -546,14 +543,10 @@ export const VerificationForm = () => {
             <div className="flex gap-4">
               <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
                 <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                Retour
+                {t("back")}
               </Button>
-              <Button 
-                onClick={handleKycNext} 
-                className="flex-1 group"
-                disabled={wantsRewards && !validateEVMAddress(walletAddress)}
-              >
-                Finaliser
+              <Button onClick={handleKycNext} className="flex-1 group">
+                {t("submit")}
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
@@ -563,23 +556,22 @@ export const VerificationForm = () => {
         {kycStep === 5 && (
           <div className="text-center space-y-4">
             <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
-            <h2 className="text-2xl font-bold">Vérification Soumise</h2>
+            <h2 className="text-2xl font-bold">{t("verification.submitted")}</h2>
             <p className="text-gray-600">
-              Nous examinerons vos informations et reviendrons vers vous rapidement.
+              {t("review.message")}
             </p>
             <div className="p-4 bg-blue-50 rounded-lg space-y-3">
               <div className="flex items-center justify-center text-blue-600 gap-2">
                 <Clock3 className="h-5 w-5" />
-                <p className="font-medium">Délai de traitement estimé</p>
+                <p className="font-medium">{t("processing.time")}</p>
               </div>
               <p className="text-sm text-gray-600">
-                La vérification de votre dossier prend généralement entre 24 et 48 heures ouvrées.
-                Vous recevrez un email dès que votre vérification sera terminée.
+                {t("processing.details")}
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
-                Adresse de récompense : {walletAddress}
+                {t("reward.address.label")} {walletAddress}
               </p>
             </div>
           </div>
