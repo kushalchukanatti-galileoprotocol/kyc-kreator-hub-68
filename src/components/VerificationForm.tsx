@@ -1,4 +1,3 @@
-<lov-code>
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,10 +30,7 @@ export const VerificationForm = () => {
   });
 
   const validatePhoneNumber = (phone: string) => {
-    // Remove all non-numeric characters except +
     const cleanedNumber = phone.replace(/[^\d+]/g, '');
-    // Check if the number starts with + and has 10-12 digits
-    // Or doesn't start with + and has 10-12 digits
     const numberWithoutPlus = cleanedNumber.replace(/^\+/, '');
     return numberWithoutPlus.length >= 10 && numberWithoutPlus.length <= 12;
   };
@@ -482,4 +478,29 @@ export const VerificationForm = () => {
             <h2 className="text-2xl font-bold">{t("reward.address")}</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
-             
+              <p>{t("wallet.instruction.1")}</p>
+              <Input
+                placeholder={t("wallet.address")}
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                required
+                className="transition-all duration-200 focus:ring-2 focus:ring-secondary"
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
+                <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                {t("back")}
+              </Button>
+              <Button onClick={handleKycNext} className="flex-1 group">
+                {t("submit")}
+                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
