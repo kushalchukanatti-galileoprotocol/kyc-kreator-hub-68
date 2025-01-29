@@ -86,8 +86,8 @@ export const VerificationForm = () => {
     if (kycStep === 2) {
       if (!kycData.documentNumber || !kycData.documentExpiry) {
         toast({
-          title: "Informations manquantes",
-          description: "Veuillez remplir le numéro du document et sa date d'expiration.",
+          title: t("missing.info"),
+          description: t("fill.required"),
           variant: "destructive",
         });
         return;
@@ -95,16 +95,16 @@ export const VerificationForm = () => {
 
       if (documentType === "id" && (!kycData.idFront || !kycData.idBack)) {
         toast({
-          title: "Documents manquants",
-          description: "Veuillez télécharger le recto et le verso de votre carte d'identité.",
+          title: t("missing.info"),
+          description: t("doc.instruction.1"),
           variant: "destructive",
         });
         return;
       }
       if (documentType === "passport" && !kycData.passportPage) {
         toast({
-          title: "Document manquant",
-          description: "Veuillez télécharger la page principale de votre passeport.",
+          title: t("missing.info"),
+          description: t("doc.instruction.1"),
           variant: "destructive",
         });
         return;
@@ -113,18 +113,18 @@ export const VerificationForm = () => {
 
     if (kycStep === 3 && !kycData.selfie) {
       toast({
-        title: "Selfie manquant",
-        description: "Veuillez prendre un selfie avant de continuer.",
+        title: t("missing.info"),
+        description: t("selfie.instruction.1"),
         variant: "destructive",
-        });
+      });
       return;
     }
 
     if (kycStep === 4) {
       if (!walletAddress) {
         toast({
-          title: "Adresse manquante",
-          description: "Veuillez entrer votre adresse de wallet.",
+          title: t("missing.info"),
+          description: t("wallet.instruction.1"),
           variant: "destructive",
         });
         return;
@@ -132,8 +132,8 @@ export const VerificationForm = () => {
       
       if (!validateEVMAddress(walletAddress)) {
         toast({
-          title: "Adresse invalide",
-          description: "Veuillez entrer une adresse EVM valide (format: 0x...)",
+          title: t("invalid.phone"),
+          description: t("wallet.instruction.2"),
           variant: "destructive",
         });
         return;
