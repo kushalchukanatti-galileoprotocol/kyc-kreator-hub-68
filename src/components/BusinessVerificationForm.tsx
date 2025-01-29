@@ -64,9 +64,12 @@ export const BusinessVerificationForm = () => {
   };
 
   const validatePhoneNumber = (phone: string) => {
-    // Simplified validation: checks if the number contains between 6 and 15 digits
-    const phoneRegex = /^\d{6,15}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
+    // Remove all non-numeric characters except +
+    const cleanedNumber = phone.replace(/[^\d+]/g, '');
+    // Check if the number starts with + and has 10-12 digits
+    // Or doesn't start with + and has 10-12 digits
+    const numberWithoutPlus = cleanedNumber.replace(/^\+/, '');
+    return numberWithoutPlus.length >= 10 && numberWithoutPlus.length <= 12;
   };
 
   const handleKybNext = () => {
@@ -106,7 +109,7 @@ export const BusinessVerificationForm = () => {
       if (!validatePhoneNumber(kybData.legalRepPhone)) {
         toast({
           title: "Invalid Phone Format",
-          description: "Please enter a valid phone number (6-15 digits)",
+          description: "Please enter a valid phone number (10-12 digits)",
           variant: "destructive",
         });
         return;

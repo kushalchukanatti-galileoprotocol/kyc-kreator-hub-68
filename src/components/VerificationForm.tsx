@@ -1,3 +1,4 @@
+<lov-code>
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +31,12 @@ export const VerificationForm = () => {
   });
 
   const validatePhoneNumber = (phone: string) => {
-    // Format international : +XX XXX XXX XXX
-    const phoneRegex = /^\+[1-9]\d{1,2}[ ]\d{3}[ ]\d{3}[ ]\d{3}$/;
-    return phoneRegex.test(phone);
+    // Remove all non-numeric characters except +
+    const cleanedNumber = phone.replace(/[^\d+]/g, '');
+    // Check if the number starts with + and has 10-12 digits
+    // Or doesn't start with + and has 10-12 digits
+    const numberWithoutPlus = cleanedNumber.replace(/^\+/, '');
+    return numberWithoutPlus.length >= 10 && numberWithoutPlus.length <= 12;
   };
 
   const validateEVMAddress = (address: string) => {
@@ -478,105 +482,4 @@ export const VerificationForm = () => {
             <h2 className="text-2xl font-bold">{t("reward.address")}</h2>
             
             <div className="bg-blue-50 p-4 rounded-lg mb-6">
-              <h3 className="font-semibold mb-2 flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-blue-600" />
-                {t("wallet.info")}
-              </h3>
-              <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                <li>{t("wallet.instruction.1")}</li>
-                <li>{t("wallet.instruction.2")}</li>
-                <li>{t("wallet.instruction.3")}</li>
-              </ul>
-              <a 
-                href="https://metamask.io/download/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-flex items-center mt-4 text-blue-600 hover:text-blue-700 font-medium"
-              >
-                <ArrowRight className="mr-2 h-4 w-4" />
-                {t("create.wallet")}
-              </a>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="optOutRewards"
-                  checked={!wantsRewards}
-                  onCheckedChange={(checked) => {
-                    setWantsRewards(!checked);
-                    if (checked) {
-                      setWalletAddress('');
-                    }
-                  }}
-                />
-                <div className="grid gap-1.5 leading-none">
-                  <label
-                    htmlFor="optOutRewards"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Je ne souhaite pas recevoir de tokens RIWA
-                  </label>
-                  <p className="text-sm text-muted-foreground">
-                    Vous pouvez toujours compléter votre vérification sans recevoir de récompense
-                  </p>
-                </div>
-              </div>
-
-              {wantsRewards && (
-                <div className="space-y-2">
-                  <Label htmlFor="walletAddress">Adresse EVM</Label>
-                  <Input
-                    id="walletAddress"
-                    placeholder="0x..."
-                    value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    className="font-mono"
-                  />
-                  <p className="text-sm text-gray-500">
-                    L'adresse doit commencer par "0x" et contenir 42 caractères au total
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-4">
-              <Button onClick={handleKycBack} variant="outline" className="flex-1 group">
-                <ArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-                {t("back")}
-              </Button>
-              <Button onClick={handleKycNext} className="flex-1 group">
-                {t("submit")}
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {kycStep === 5 && (
-          <div className="text-center space-y-4">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
-            <h2 className="text-2xl font-bold">{t("verification.submitted")}</h2>
-            <p className="text-gray-600">
-              {t("review.message")}
-            </p>
-            <div className="p-4 bg-blue-50 rounded-lg space-y-3">
-              <div className="flex items-center justify-center text-blue-600 gap-2">
-                <Clock3 className="h-5 w-5" />
-                <p className="font-medium">{t("processing.time")}</p>
-              </div>
-              <p className="text-sm text-gray-600">
-                {t("processing.details")}
-              </p>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">
-                {t("reward.address.label")} {walletAddress}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-};
+             
